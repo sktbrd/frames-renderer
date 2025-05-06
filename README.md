@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Farcaster Frame Viewer
+
+A simple application that allows you to view and interact with Farcaster Frames. This app provides a user-friendly interface where you can input any Frame URL and render it in your browser.
+
+## Features
+
+- Enter any Farcaster Frame URL to view it
+- Interact with Frame buttons
+- Input text when the frame requires it
+- Responsive design that works on desktop and mobile
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Node.js (v18 or later)
+- npm (v8 or later)
+
+### Installation
+
+1. Clone the repository
+```
+git clone https://github.com/yourusername/my-farcaster-app.git
+cd my-farcaster-app
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies
+```
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Run the development server
+```
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Open your browser and navigate to `http://localhost:3000`
 
-## Learn More
+## How to Use
 
-To learn more about Next.js, take a look at the following resources:
+1. Enter a valid Farcaster Frame URL in the input field
+2. Click the "Load Frame" button
+3. Interact with the frame using the provided buttons
+4. Enter text if prompted by the frame
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Example Frame URLs
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+You can try these example Farcaster Frames:
 
-## Deploy on Vercel
+- Onchain Summer: https://frame.onchnsummer.xyz
+- Word Game: https://frames-word-game.vercel.app
+- Frames.js Examples: https://framesjs.org
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Technical Implementation
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This application is built with:
+
+- Next.js (App Router)
+- TypeScript
+- Tailwind CSS
+
+The app implements a simplified version of the Farcaster Frames protocol:
+
+1. A client-side component fetches and renders frame data
+2. Server-side route handlers process frame GET and POST requests
+3. Simple frame metadata parsing extracts images, buttons, and input fields
+
+## Limitations
+
+This is a simplified viewer that doesn't implement the full Farcaster Frame protocol:
+
+- No wallet/signer integration for authenticated actions
+- No proper frame message signing
+- Limited parsing of frame metadata
+- No support for frame transactions
+
+For a more complete implementation, check out the [Frames.js](https://framesjs.org) library.
+
+## License
+
+MIT

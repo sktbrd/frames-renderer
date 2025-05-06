@@ -1,103 +1,180 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
+import FrameRenderer from "./components/FrameRenderer";
+import ConnectWalletFarcaster from "./components/ConnectWalletFarcaster";
+// Remove problematic FarcasterLogin import
+// import FarcasterLogin from "./components/FarcasterLogin";
+// import { useAuth } from "./providers";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [frameUrl, setFrameUrl] = useState<string>("");
+  const [currentUrl, setCurrentUrl] = useState<string>("");
+  // Simulate authenticated state for demo
+  const isConnected = true;
+  const fid = 123456; // Demo FID
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setCurrentUrl(frameUrl);
+  };
+
+  return (
+    <div
+      style={{ backgroundColor: "white", color: "#333" }}
+      className="min-h-screen"
+    >
+      <div
+        style={{ maxWidth: "800px", margin: "0 auto", padding: "32px 16px" }}
+      >
+        <header style={{ textAlign: "center", marginBottom: "32px" }}>
+          <h1
+            style={{
+              fontSize: "28px",
+              fontWeight: "bold",
+              color: "#4a63c4",
+              marginBottom: "8px",
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            Farcaster Frame Viewer
+          </h1>
+          <p style={{ color: "#666" }}>
+            Explore and interact with Farcaster frames
+          </p>
+        </header>
+
+        {/* Connect Wallet & Farcaster */}
+        <ConnectWalletFarcaster />
+
+        {/* Status indicator */}
+        <div style={{ maxWidth: "500px", margin: "0 auto 24px auto" }}>
+          <div
+            style={{
+              backgroundColor: "#e6f0ff",
+              border: "1px solid #ccdeff",
+              borderRadius: "8px",
+              padding: "16px",
+              display: "flex",
+              justifyContent: "center",
+            }}
           >
-            Read our docs
-          </a>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <div
+                style={{
+                  width: "12px",
+                  height: "12px",
+                  backgroundColor: "#4ade80",
+                  borderRadius: "50%",
+                }}
+              ></div>
+              <span style={{ fontSize: "14px", fontWeight: "500" }}>
+                Demo Mode: Connected as FID {fid}
+              </span>
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+
+        {/* URL Input Form */}
+        <div
+          style={{
+            maxWidth: "500px",
+            margin: "0 auto 32px auto",
+            backgroundColor: "#f9fafb",
+            border: "1px solid #e5e7eb",
+            borderRadius: "8px",
+            padding: "20px",
+          }}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          <h2
+            style={{
+              fontSize: "18px",
+              fontWeight: "600",
+              marginBottom: "16px",
+              color: "#333",
+            }}
+          >
+            Load a Frame
+          </h2>
+          <form onSubmit={handleSubmit}>
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "12px" }}
+            >
+              <input
+                type="url"
+                value={frameUrl}
+                onChange={(e) => setFrameUrl(e.target.value)}
+                placeholder="Enter a Farcaster frame URL (e.g., https://gnars.com)"
+                style={{
+                  padding: "12px",
+                  width: "100%",
+                  borderRadius: "6px",
+                  border: "1px solid #d1d5db",
+                }}
+                required
+              />
+              <button
+                type="submit"
+                style={{
+                  padding: "12px",
+                  backgroundColor: "#4361ee",
+                  color: "white",
+                  borderRadius: "6px",
+                  fontWeight: "500",
+                  border: "none",
+                }}
+              >
+                Load Frame
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {/* Frame Renderer */}
+        {currentUrl ? (
+          <div
+            style={{
+              maxWidth: "500px",
+              margin: "0 auto",
+              backgroundColor: "white",
+              border: "1px solid #e5e7eb",
+              borderRadius: "8px",
+              padding: "20px",
+            }}
+          >
+            <h2
+              style={{
+                fontSize: "18px",
+                fontWeight: "600",
+                marginBottom: "16px",
+                color: "#333",
+              }}
+            >
+              Frame Preview
+            </h2>
+            <FrameRenderer
+              frameUrl={currentUrl}
+              isConnected={isConnected}
+              fid={fid}
+            />
+          </div>
+        ) : (
+          <div
+            style={{
+              maxWidth: "500px",
+              margin: "0 auto",
+              backgroundColor: "white",
+              border: "1px solid #e5e7eb",
+              borderRadius: "8px",
+              padding: "32px 20px",
+              textAlign: "center",
+            }}
+          >
+            <p style={{ color: "#6b7280" }}>
+              Enter a frame URL above to preview it here
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
