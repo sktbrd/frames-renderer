@@ -14,10 +14,18 @@ interface FrameData {
     postUrl: string;
 }
 
+interface FrameObject {
+    image?: string;
+    title?: string;
+    buttons?: { label?: string; action?: string }[];
+    input?: { text?: string };
+    inputText?: boolean;
+    postUrl?: string;
+}
+
 /** Proxies fetching a frame through a backend to avoid CORS issues and preserve user IP privacy */
 export async function GET(request: NextRequest): Promise<Response> {
     const url = request.nextUrl.searchParams.get("url");
-    const fid = request.nextUrl.searchParams.get("fid");
     const specification = request.nextUrl.searchParams.get("specification") ?? "farcaster_v2";
 
     if (!url) {
@@ -26,10 +34,6 @@ export async function GET(request: NextRequest): Promise<Response> {
 
     if (!isSpecificationValid(specification)) {
         return NextResponse.json({ message: "Invalid specification" }, { status: 400 });
-    }
-
-    if (fid) {
-        console.log(`Using FID ${fid} for frame authentication`);
     }
 
     try {
@@ -70,7 +74,7 @@ export async function GET(request: NextRequest): Promise<Response> {
 export async function POST(req: NextRequest): Promise<Response> {
     try {
         const body = await req.json();
-        const { frameUrl, buttonIndex, fid } = body;
+        const { frameUrl, buttonIndex } = body;
 
         if (!frameUrl) {
             return NextResponse.json({ message: "Missing frameUrl in request body" }, { status: 400 });
@@ -110,7 +114,18 @@ export async function POST(req: NextRequest): Promise<Response> {
 /**
  * Helper function to extract frame data from parseFramesWithReports result
  */
-function extractFrameData(parseResult: any, fallbackUrl: string): FrameData {
+function extractFrameData(parseResult: unknown, fallbackUrl: string): FrameData {
+    // Type guards for parseResult
+    type RawMeta = { flattenedMeta?: Record<string, string> };
+    type FarcasterV2 = { status: string; frame: FrameObject };
+    type Farcaster = { status: string; frame: FrameObject };
+    type ParseResult = {
+        raw?: RawMeta;
+        farcaster_v2?: FarcasterV2;
+        farcaster?: Farcaster;
+    };
+    const safeParseResult = parseResult as ParseResult;
+
     // Initialize with default values
     const frameData: FrameData = {
         image: null,
@@ -122,8 +137,8 @@ function extractFrameData(parseResult: any, fallbackUrl: string): FrameData {
 
     try {
         // Try to get raw meta tags data first
-        if (parseResult.raw?.flattenedMeta) {
-            const meta = parseResult.raw.flattenedMeta;
+        if (safeParseResult.raw?.flattenedMeta) {
+            const meta = safeParseResult.raw.flattenedMeta;
 
             // Extract button data from meta tags
             const buttons: { label: string; action: string }[] = [];
@@ -154,8 +169,8 @@ function extractFrameData(parseResult: any, fallbackUrl: string): FrameData {
     // Try to get data from farcaster_v2 validated result if buttons are still empty
     if (frameData.buttons.length === 0) {
         // Try to get data from farcaster_v2 result first
-        if (parseResult.farcaster_v2?.status === "success") {
-            const frame = parseResult.farcaster_v2.frame;
+        if (safeParseResult.farcaster_v2?.status === "success") {
+            const frame = safeParseResult.farcaster_v2.frame;
 
             if (!frameData.image) {
                 frameData.image = frame.image || null;
@@ -166,7 +181,7 @@ function extractFrameData(parseResult: any, fallbackUrl: string): FrameData {
             }
 
             if (frame.buttons && frame.buttons.length > 0) {
-                frameData.buttons = frame.buttons.map((btn: any) => ({
+                frameData.buttons = frame.buttons.map((btn: { label?: string; action?: string }) => ({
                     label: btn.label || 'Continue',
                     action: btn.action || 'post'
                 }));
@@ -184,8 +199,8 @@ function extractFrameData(parseResult: any, fallbackUrl: string): FrameData {
         }
 
         // Fallback to older farcaster format if needed
-        if (parseResult.farcaster?.status === "success") {
-            const frame = parseResult.farcaster.frame;
+        if (safeParseResult.farcaster?.status === "success") {
+            const frame = safeParseResult.farcaster.frame;
 
             if (!frameData.image) {
                 frameData.image = frame.image || null;
@@ -196,7 +211,7 @@ function extractFrameData(parseResult: any, fallbackUrl: string): FrameData {
             }
 
             if (frame.buttons && frame.buttons.length > 0) {
-                frameData.buttons = frame.buttons.map((btn: any) => ({
+                frameData.buttons = frame.buttons.map((btn: { label?: string; action?: string }) => ({
                     label: btn.label || 'Continue',
                     action: btn.action || 'post'
                 }));
@@ -234,4 +249,4 @@ function extractFrameData(parseResult: any, fallbackUrl: string): FrameData {
     }
 
     return frameData;
-} 
+}
